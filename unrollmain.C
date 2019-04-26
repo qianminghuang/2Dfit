@@ -36,7 +36,7 @@ TH1D* unroll(TH2D* th2_in,Double_t* xbin, Double_t* ybin,  Int_t xbins_in, Int_t
 	Int_t nbins = nbinsx*nbinsy;
 
 	TH1D* h1 = new TH1D("hist", "hist", nbins, 0, nbins);
-	TH1D* h1_out = new TH1D("unrolled hist", "unrolled hist", nbins-2, 0, nbins-2);
+	TH1D* h1_out = new TH1D("unrolled hist", "unrolled hist", nbins, 0, nbins);
 
 	for(Int_t iy=1; iy<=nbinsy; iy++){
 		for(Int_t ix=1; ix<=nbinsx; ix++){
@@ -46,6 +46,7 @@ TH1D* unroll(TH2D* th2_in,Double_t* xbin, Double_t* ybin,  Int_t xbins_in, Int_t
 			h1->SetBinError(ix+(iy-1)*nbinsx,th2->GetBinError(th2->FindBin(x_temp, y_temp)));
 		}
 	}
+/*
 	for(Int_t ii=1; ii<=nbins-2;ii++){
 		if(ii<9){
 			h1_out->SetBinContent(ii, h1->GetBinContent(ii));
@@ -60,6 +61,22 @@ TH1D* unroll(TH2D* th2_in,Double_t* xbin, Double_t* ybin,  Int_t xbins_in, Int_t
                         h1_out->SetBinError(ii,h1->GetBinError(ii+2));
 		}
 	}
+*/
+        for(Int_t ii=1; ii<=nbins;ii++){
+                        h1_out->SetBinContent(ii, h1->GetBinContent(ii));
+                        h1_out->SetBinError(ii,h1->GetBinError(ii));
+/*                if(ii==9){
+                        h1_out->SetBinContent(ii, h1->GetBinContent(ii)+h1->GetBinContent(ii+1)+h1->GetBinContent(ii+2));
+                        h1_out->SetBinError(ii,sqrt(h1->GetBinError(ii)*h1->GetBinError(ii)+h1->GetBinError(ii+1)*h1->GetBinError(ii+1)+h1->GetBinError(ii+2)*h1->GetBinError(ii+2)));
+                }
+                if(ii==10){
+                        h1_out->SetBinContent(ii, h1->GetBinContent(ii+2));
+                        h1_out->SetBinError(ii,h1->GetBinError(ii+2));
+                }
+*/
+        }
+
+
 	return h1_out;
 }
 
@@ -70,7 +87,7 @@ void unrollmain(){
 	std::ostringstream strs;
 	std::string lumivalue = strs.str();
 	Double_t lumi=35.857;
-	Double_t mjj_bins[5]={500, 800, 1200, 1800, 2000};
+	Double_t mjj_bins[5]={500, 800, 1200, 1700, 2000};
 //        Double_t mlla_bins[5]={90, 130, 170, 210, 240};
         Double_t detajj_bins[4]={30,80,130,200};
 
@@ -83,7 +100,7 @@ void unrollmain(){
 	t_WA->SetLineColor(kBlue-6);
 	t_WA->Scale(lumi*WA_scale);
 //	const char *name[9]={"500~800","800~1200","1200~2000","500~800","800~1200","1200~2000","500~800","800~1200","1200~2000"};
-	const char *name[10]={"500~800","800~1200","1200~1800","1800~inf","500~800","800~1200","1200~1800","1800~inf","500~1800","1800~inf"};
+	const char *name[12]={"500~800","800~1200","1200~1700","1700~inf","500~800","800~1200","1200~1700","1700~inf","500~800","800~1200","1200~1700","1700~inf"};
 
 	TFile* f_WAJJ=TFile::Open("./2d_WAJJ.root");
         TH2D* th2_WAJJ=(TH2D*)f_WAJJ->Get("th2");
@@ -134,7 +151,7 @@ void unrollmain(){
 	t_STop->SetMarkerColor(kGreen+2);
         t_STop->SetLineColor(kGreen+2);
 	t_STop->Scale(lumi);
-	for(Int_t i=1;i<=10;i++){ t_STop->GetXaxis()->SetBinLabel(i,name[i-1]);}
+	for(Int_t i=1;i<=12;i++){ t_STop->GetXaxis()->SetBinLabel(i,name[i-1]);}
 
 	TFile* f_fakephoton=TFile::Open("./2d_fakephoton.root");
         TH2D* th2_fakephoton=(TH2D*)f_fakephoton->Get("th2");
@@ -272,8 +289,8 @@ cout<<"bkg  "<<t_WA->Integral();
 	fout->Close();
 
 	latex1.DrawLatexNDC(0.15,0.5,"#font[12]{M_{l#gamma} #in (30, 80)}");
-        latex1.DrawLatexNDC(0.5,0.5,"#font[12]{M_{l#gamma} #in (80, 130)}");
-        latex1.DrawLatexNDC(0.85,0.5,"#font[12]{M_{l#gamma} > 130}");
+        latex1.DrawLatexNDC(0.45,0.5,"#font[12]{M_{l#gamma} #in (80, 130)}");
+        latex1.DrawLatexNDC(0.75,0.5,"#font[12]{M_{l#gamma} > 130}");
 
         line1->Draw();
         line2->Draw();

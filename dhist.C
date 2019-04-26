@@ -63,7 +63,7 @@ int nentries1 = (int)Outtree1->GetEntries();
 
 double count=0;
 
-	Double_t mjj_bins[5]={500, 800, 1200, 1800, 2000};
+	Double_t mjj_bins[5]={500, 800, 1200, 1700, 2000};
 //	Double_t mlla_bins[5]={90, 130, 170, 210, 240};
 	Double_t mla_bins[4]={30, 80,  130, 200};
 //	TH2D* th2 = new TH2D("th2","th2",4, mjj_bins, 4, mlla_bins);
